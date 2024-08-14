@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.*;
 public class BrandController {
     private final BrandService brandService;
 
+
+    @GetMapping("/{brand-name}")
+    ApiResponse<BrandDto> getBrand(@PathVariable("brand-name") final String brandName) {
+        Brand brand = brandService.findBrandByName(brandName);
+        return ApiResponse.createSuccess(BrandDto.createInstance(brand));
+    }
+
     @PostMapping
     ApiResponse<BrandDto> createBrand(@Valid @RequestBody final BrandDto brandDto) {
         Brand brand = brandService.createBrand(brandDto);
@@ -21,7 +28,7 @@ public class BrandController {
     }
 
     @PatchMapping("/{brandId}")
-    ApiResponse<?> createBrand(@PathVariable final long brandId,
+    ApiResponse<?> updateBrand(@PathVariable final long brandId,
                                @Valid @RequestBody final BrandDto brandDto) {
         brandService.updateBrand(brandId, brandDto);
         return ApiResponse.createSuccessWithNoContent();
