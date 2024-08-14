@@ -1,5 +1,6 @@
 package com.oioioihi.ootd.service;
 
+import com.oioioihi.ootd.exception.BrandAlreadyExistException;
 import com.oioioihi.ootd.exception.NotFoundException;
 import com.oioioihi.ootd.model.dto.BrandDto;
 import com.oioioihi.ootd.model.entity.Brand;
@@ -16,22 +17,31 @@ public class BrandService {
 
     @Transactional
     public Brand createBrand(final BrandDto brandDto) {
+        if (brandRepository.findByName(brandDto.getName()).isPresent()) {
+            throw new BrandAlreadyExistException("%s은 이미 존재하는 브랜드입니다.".formatted(brandDto.getName()));
+        }
         Brand brand = brandDto.toEntity();
         return brandRepository.save(brand);
     }
 
     @Transactional
     public void updateBrand(final long brandId, final BrandDto brandDto) {
+        brandRepository.findByName(brandDto.getName())
+                .ifPresentOrElse(findBrand -> {
+                            throw new BrandAlreadyExistException("%s은 이미 존재하는 브랜드입니다.".formatted(findBrand.getName()));
+                        },
+                        () -> {
+                            Brand brand = brandRepository.findById(brandId).orElseThrow(() ->
+                                    new NotFoundException("%s번 브랜드가 존재하지 않습니다.".formatted(brandId)));
+                            brandRepository.save(brand.update(brandDto));
+                        });
 
-        Brand brand = brandRepository.findById(brandId).orElseThrow(() ->
-                new NotFoundException("%번 브랜드가 존재하지 않습니다.".formatted(brandId)));
-        brandRepository.save(brand.update(brandDto));
     }
 
     @Transactional
     public void deleteBrand(long brandId) {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() ->
-                new NotFoundException("%번 브랜드가 존재하지 않습니다.".formatted(brandId)));
+                new NotFoundException("%s번 브랜드가 존재하지 않습니다.".formatted(brandId)));
         brandRepository.delete(brand);
     }
 
@@ -40,4 +50,5 @@ public class BrandService {
         return brandRepository.findByName(brandName).orElseThrow(() ->
                 new NotFoundException("%s 브랜드가 없습니다.".formatted(brandName)));
     }
+
 }

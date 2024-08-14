@@ -3,15 +3,13 @@ package com.oioioihi.ootd.model.entity;
 
 import com.oioioihi.ootd.model.dto.BrandDto;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Getter
 @Builder
 @Entity
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Brand {
     @Id
@@ -25,10 +23,6 @@ public class Brand {
         this.name = name;
     }
 
-    private Brand(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     public static Brand createInstance(String name) {
         return new Brand(name);
