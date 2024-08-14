@@ -30,8 +30,8 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         brand.name.as("brand"),
                         product.price.sum().as("price")))
                 .innerJoin(brand)
-                .on(brand.id.eq(product.id.brandId))
-                .groupBy(product.id.brandId)
+                .on(brand.id.eq(product.brandId))
+                .groupBy(product.brandId)
                 .orderBy(product.price.sum().asc())
                 .limit(1)
                 .fetchOne();
@@ -45,13 +45,13 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 brand.name.as("brand"),
                                 product.price.as("price")))
                         .innerJoin(brand)
-                        .on(brand.id.eq(product.id.brandId))
+                        .on(brand.id.eq(product.brandId))
                         .where(product.price.eq(
                                         JPAExpressions.select(product.price.max())
                                                 .from(product)
-                                                .where(product.id.categoryId.eq(categoryId))
+                                                .where(product.categoryId.eq(categoryId))
                                 )
-                                .and(product.id.categoryId.eq(categoryId)))
+                                .and(product.categoryId.eq(categoryId)))
                         .fetch()
 
         );
@@ -65,12 +65,12 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 brand.name.as("brand"),
                                 product.price.as("price")))
                         .innerJoin(brand)
-                        .on(brand.id.eq(product.id.brandId))
+                        .on(brand.id.eq(product.brandId))
                         .where(product.price.eq(
                                         JPAExpressions.select(product.price.min())
                                                 .from(product)
-                                                .where(product.id.categoryId.eq(categoryId)))
-                                .and(product.id.categoryId.eq(categoryId)))
+                                                .where(product.categoryId.eq(categoryId)))
+                                .and(product.categoryId.eq(categoryId)))
                         .fetch()
 
         );
