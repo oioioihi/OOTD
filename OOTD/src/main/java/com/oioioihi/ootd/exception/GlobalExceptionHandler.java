@@ -21,7 +21,9 @@ public class GlobalExceptionHandler {
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.createServerError(exception.getMessage()));
 //    }
 
-    @ExceptionHandler(ProductAlreadyExistException.class)
+    @ExceptionHandler(value = {ProductAlreadyExistException.class,
+            BrandAlreadyExistException.class,
+            CategoryAlreadyExistException.class})
     public ResponseEntity<ApiResponse<?>> handleAllUncaughtException(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.createClientError(exception.getMessage()));
     }
