@@ -13,6 +13,9 @@
 * H2
 * Querydsl
 
+## 구현한 API
+- 아래 문서에 접속하시면 구현된 API 목록이 나타납니다.
+- https://documenter.getpostman.com/view/19769673/2sA3s7iUZd
 
 ## Quick Start
 - **애플리케이션 포트는 `8080` 입니다.**
@@ -62,8 +65,5 @@
 
 ```
 
-## 구현한 API
-- 아래 문서에 접속하시면 구현된 API 목록이 나타납니다.
-- https://documenter.getpostman.com/view/19769673/2sA3s7iUZd
 
 
