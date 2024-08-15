@@ -3,43 +3,46 @@ package com.oioioihi.ootd.model.entity;
 
 import com.oioioihi.ootd.model.dto.ProductDto;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
 @Entity
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product {
 
-    @EmbeddedId
-    private ProductId id;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "category_id")
+    private Long categoryId;
+    @Column(name = "brand_id")
+    private Long brandId;
     @Column(name = "price")
     private Long price;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Category category;
     @ManyToOne
-    @JoinColumn(name = "brand_id", insertable = false, updatable = false)
+    @JoinColumn(name = "brand_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Brand brand;
 
-    private Product(ProductId id, Long price, Category category, Brand brand) {
-        this.id = id;
-        this.price = price;
-        this.category = category;
-        this.brand = brand;
-    }
 
     public static Product createInstance(ProductDto productDto) {
-        ProductId productId = ProductId.createInstance(productDto);
         return Product.builder()
-                .id(productId)
+                .categoryId(productDto.getCategoryId())
+                .brandId(productDto.getBrandId())
                 .price(productDto.getPrice())
                 .build();
     }
 
+    public Product update(Product newProduct) {
+        this.categoryId = newProduct.getCategoryId();
+        this.brandId = newProduct.getBrandId();
+        this.price = newProduct.price;
+        return this;
+    }
 }
