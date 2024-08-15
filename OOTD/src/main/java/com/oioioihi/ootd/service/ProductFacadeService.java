@@ -1,9 +1,10 @@
 package com.oioioihi.ootd.service;
 
+import com.oioioihi.ootd.exception.ProductAlreadyExistException;
 import com.oioioihi.ootd.model.dao.ProductDao;
-import com.oioioihi.ootd.model.dto.LowestProductsDto;
-import com.oioioihi.ootd.model.dto.LowestProductsOneBrandDto;
-import com.oioioihi.ootd.model.dto.ProductByCategoryDto;
+import com.oioioihi.ootd.model.dto.CheapestProductListDto;
+import com.oioioihi.ootd.model.dto.CheapestProductsByBrandDto;
+import com.oioioihi.ootd.model.dto.MinAndMaxPriceProductByCategoryDto;
 import com.oioioihi.ootd.model.dto.ProductDto;
 import com.oioioihi.ootd.model.dto.request.ProductCreateDto;
 import com.oioioihi.ootd.model.dto.request.ProductUpdateDto;
@@ -27,30 +28,33 @@ public class ProductFacadeService {
     private final BrandService brandService;
 
     @Transactional(readOnly = true)
-    public LowestProductsDto getMinPriceProducts() {
+    public CheapestProductListDto getMinPriceProducts() {
 
         AtomicReference<Long> totalPrice = new AtomicReference<>(0L);
         List<ProductDao> minPriceProducts = productService.getMinPriceProducts();
 
-        return LowestProductsDto.builder()
-                .productList(minPriceProducts.stream().map(p -> {
-                    totalPrice.updateAndGet(v -> v + p.getPrice());
-                    return ProductDto.builder()
-                            .price(p.getPrice())
-                            .brand(p.getBrand())
-                            .category(p.getCategory())
-                            .build();
-                }).toList())
+        return CheapestProductListDto.builder()
+                .productList(minPriceProducts
+                        .stream()
+                        .map(p -> {
+                            totalPrice.updateAndGet(v -> v + p.getPrice());
+                            return ProductDto.builder()
+                                    .price(p.getPrice())
+                                    .brand(p.getBrand())
+                                    .category(p.getCategory())
+                                    .build();
+                        }).toList())
                 .totalPrice(totalPrice.get())
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public LowestProductsOneBrandDto getMinPriceProductAndBrand() {
+    public CheapestProductsByBrandDto getCheapestProductsByBrand() {
 
         ProductDao minPriceProductAndBrand = productService.getMinPriceProductAndBrand();
         List<Product> products = productService.findAllByIdBrandId(minPriceProductAndBrand.getBrandId());
-        return LowestProductsOneBrandDto.builder()
+
+        return CheapestProductsByBrandDto.builder()
                 .brand(minPriceProductAndBrand.getBrand())
                 .productList(products.stream().map(p -> {
                     return ProductDto.builder()
@@ -64,17 +68,19 @@ public class ProductFacadeService {
 
 
     @Transactional(readOnly = true)
-    public ProductByCategoryDto findMinAndMaxPriceProductByCategoryName(String categoryName) {
+    public MinAndMaxPriceProductByCategoryDto findMinAndMaxPriceProductByCategoryName(String categoryName) {
+
         Category category = categoryService.findCategoryByName(categoryName);
         Pair<List<ProductDao>, List<ProductDao>> products = productService.findMinAndMaxProductByCategoryName(category.getId());
-        return ProductByCategoryDto.builder()
-                .max(products.getFirst()
+
+        return MinAndMaxPriceProductByCategoryDto.builder()
+                .cheapestProduct(products.getFirst()
                         .stream()
                         .map(p -> ProductDto.builder()
                                 .price(p.getPrice())
                                 .brand(p.getBrand())
                                 .build()).toList())
-                .min(products.getSecond()
+                .mostExpensiveProduct(products.getSecond()
                         .stream()
                         .map(p ->
                                 ProductDto.builder()
@@ -86,10 +92,17 @@ public class ProductFacadeService {
     }
 
     @Transactional
-    public Product createProduct(final ProductCreateDto productCreateDto) {
+    public ProductDto createProduct(final ProductCreateDto productCreateDto) {
 
         Category category = categoryService.findCategoryByName(productCreateDto.getCategory());
         Brand brand = brandService.findBrandByName(productCreateDto.getBrand());
+
+
+        if (productService.isExist(category.getId(), brand.getId())
+        ) {
+            throw new ProductAlreadyExistException("이미 존재하는 상품입니다.");
+        }
+
 
         Product product = ProductDto.builder()
                 .categoryId(category.getId())
@@ -97,7 +110,9 @@ public class ProductFacadeService {
                 .price(productCreateDto.getPrice())
                 .build()
                 .toEntity();
-        return productService.createProduct(product);
+
+        Product savedProduct = productService.createProduct(product);
+        return ProductDto.createInstance(savedProduct, category.getName(), brand.getName());
     }
 
     @Transactional
@@ -105,25 +120,27 @@ public class ProductFacadeService {
 //TODO 맞는 로직인지 확인필요 ..
         Category category = categoryService.findCategoryByName(productUpdateDto.getNewCategory());
         Brand brand = brandService.findBrandByName(productUpdateDto.getNewBrand());
+        Product savedProduct = productService.findProductById(category.getId(), brand.getId());
 
-        Product product = ProductDto.builder()
+        Product newProduct = ProductDto.builder()
                 .categoryId(category.getId())
                 .brandId(brand.getId())
                 .price(productUpdateDto.getPrice())
                 .build()
                 .toEntity();
 
-        //TODO 트랜잭션 커밋 하고 기존 상품을 지울지 고민?
+        productService.updateProduct(savedProduct, newProduct);
         deleteProduct(productUpdateDto.getOldCategory(), productUpdateDto.getOldBrand());
-        productService.updateProduct(product);
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteProduct(String categoryName, String brandName) {
         Category category = categoryService.findCategoryByName(categoryName);
         Brand brand = brandService.findBrandByName(brandName);
+
         Product product = productService.findProductById(category.getId(), brand.getId());
         productService.deleteProduct(product);
+
     }
 }
