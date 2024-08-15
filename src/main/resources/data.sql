@@ -111,23 +111,6 @@ INSERT INTO product (category_id, brand_id, price)
 VALUES (8, 4, 2000);
 
 
--- -- 가격 D 브랜드
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (1, 4, 10000);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (2, 4, 6200);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (3, 4, 3300);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (4, 4, 9200);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (5, 4, 2200);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (6, 4, 1900);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (7, 4, 2200);
--- INSERT INTO product (category_id, brand_id, price)
--- VALUES (8, 4, 2100);
 -- E 브랜드
 INSERT INTO product (category_id, brand_id, price)
 VALUES (1, 5, 10700);
