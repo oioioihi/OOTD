@@ -51,17 +51,19 @@ public class ProductFacadeService {
     @Transactional(readOnly = true)
     public CheapestProductsByBrandDto getCheapestProductsByBrand() {
 
-        ProductDao minPriceProductAndBrand = productService.getMinPriceProductAndBrand();
-        List<Product> products = productService.findAllByIdBrandId(minPriceProductAndBrand.getBrandId());
+        ProductDao minPriceProductAndBrand = productService.getCheapestProductsByBrand();
+        List<Product> products = productService.findAllByBrandId(minPriceProductAndBrand.getBrandId());
 
         return CheapestProductsByBrandDto.builder()
                 .brand(minPriceProductAndBrand.getBrand())
-                .productList(products.stream().map(p -> {
-                    return ProductDto.builder()
-                            .price(p.getPrice())
-                            .category(p.getCategory().getName())
-                            .build();
-                }).toList())
+                .productList(products
+                        .stream()
+                        .map(p -> {
+                            return ProductDto.builder()
+                                    .price(p.getPrice())
+                                    .category(p.getCategory().getName())
+                                    .build();
+                        }).toList())
                 .totalPrice(minPriceProductAndBrand.getPrice())
                 .build();
     }
@@ -74,13 +76,13 @@ public class ProductFacadeService {
         Pair<List<ProductDao>, List<ProductDao>> products = productService.findMinAndMaxProductByCategoryName(category.getId());
 
         return MinAndMaxPriceProductByCategoryDto.builder()
-                .cheapestProduct(products.getFirst()
+                .mostExpensiveProduct(products.getFirst()
                         .stream()
                         .map(p -> ProductDto.builder()
                                 .price(p.getPrice())
                                 .brand(p.getBrand())
                                 .build()).toList())
-                .mostExpensiveProduct(products.getSecond()
+                .cheapestProduct(products.getSecond()
                         .stream()
                         .map(p ->
                                 ProductDto.builder()
