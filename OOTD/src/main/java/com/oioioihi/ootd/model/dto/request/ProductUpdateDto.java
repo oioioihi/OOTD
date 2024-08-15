@@ -1,6 +1,7 @@
 package com.oioioihi.ootd.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,7 +17,7 @@ public class ProductUpdateDto {
     String newCategory;
     @NotBlank(message = "새 브랜드명은 빈 값일 수 없습니다.")
     String newBrand;
-    @NotBlank(message = "가격은 빈 값일 수 없습니다.")
+    @PositiveOrZero
     long price;
 
 }
