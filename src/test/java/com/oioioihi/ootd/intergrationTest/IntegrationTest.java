@@ -16,8 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Sql(scripts = {"/test_sql/test.sql"},
-        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 public class IntegrationTest {
 
     @Autowired
