@@ -2,6 +2,9 @@ package com.oioioihi.ootd.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oioioihi.ootd.model.dto.CheapestProductListDto;
+import com.oioioihi.ootd.model.dto.CheapestProductsByBrandDto;
+import com.oioioihi.ootd.model.dto.MinAndMaxPriceProductByCategoryDto;
 import com.oioioihi.ootd.model.dto.ProductDto;
 import com.oioioihi.ootd.model.dto.request.ProductCreateDto;
 import com.oioioihi.ootd.model.dto.request.ProductUpdateDto;
@@ -14,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -142,5 +147,68 @@ class ProductControllerTest {
 
         verify(productFacadeService, times(1)).deleteProduct(categoryName, brandName);
     }
+
+    @Test
+    @DisplayName("가장 저렴한 제품 목록 조회")
+    void getCheapestProducts() throws Exception {
+
+        // Given
+        CheapestProductListDto cheapestProductListDto = CheapestProductListDto.builder()
+                .productList(List.of())
+                .totalPrice(1000)
+                .build();
+
+        // When
+        when(productFacadeService.getMinPriceProducts()).thenReturn(cheapestProductListDto);
+
+        // Then: GET 요청을 수행하여 올바른 상태 코드와 응답을 검증합니다.
+        this.mockMvc.perform(get("/api/v1/products/cheapest-products"))
+                .andDo(print())
+                .andExpect(status().isOk());  // 200 OK 응답을 기대합니다.
+
+        verify(productFacadeService, times(1)).getMinPriceProducts();
+    }
+
+    @Test
+    @DisplayName("브랜드별 가장 저렴한 제품 목록 조회")
+    void getCheapestProductsByBrand() throws Exception {
+
+        // Given
+        CheapestProductsByBrandDto cheapestProductsByBrandDto =
+                CheapestProductsByBrandDto
+                        .builder()
+                        .build();
+
+        // When
+        when(productFacadeService.getCheapestProductsByBrand()).thenReturn(cheapestProductsByBrandDto);
+
+        // Then: GET 요청을 수행하여 올바른 상태 코드와 응답을 검증합니다.
+        this.mockMvc.perform(get("/api/v1/products/cheapest-products/brands"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(productFacadeService, times(1)).getCheapestProductsByBrand();
+    }
+
+    @Test
+    @DisplayName("카테고리별 최저 및 최고 가격 제품 조회")
+    void findMinAndMaxPriceProductByCategoryName() throws Exception {
+
+        // Given
+        MinAndMaxPriceProductByCategoryDto minAndMaxPriceProductByCategoryDto = MinAndMaxPriceProductByCategoryDto.builder().build();
+
+        String categoryName = "상의";
+
+        // When
+        when(productFacadeService.findMinAndMaxPriceProductByCategoryName(categoryName))
+                .thenReturn(minAndMaxPriceProductByCategoryDto);
+
+        // Then
+        this.mockMvc.perform(get("/api/v1/products/cheapest-products/category/{category-name}", categoryName))
+                .andDo(print())
+                .andExpect(status().isOk());
+        verify(productFacadeService, times(1)).findMinAndMaxPriceProductByCategoryName(categoryName);
+    }
+
 
 }
