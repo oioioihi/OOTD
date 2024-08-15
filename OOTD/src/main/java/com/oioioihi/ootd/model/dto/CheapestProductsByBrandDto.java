@@ -5,7 +5,8 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder(toBuilder = true)
-public record LowestProductsDto(
+public record CheapestProductsByBrandDto(
+        String brand,
         List<ProductDto> productList,
         long totalPrice
 
