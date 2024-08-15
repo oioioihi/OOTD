@@ -23,7 +23,8 @@ public class IntegrationTest {
 
 
     @Test
-    public void testHello() throws Exception {
+    @DisplayName("카테고리 별 최저가격 브랜드와 상품 가격, 총액을 조회하는 API")
+    public void getCheapestProducts() throws Exception {
         mockMvc.perform(get("/api/v1/products/cheapest-products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
