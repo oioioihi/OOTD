@@ -81,7 +81,7 @@ class ProductControllerTest {
                         .build();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // When: productFacadeService.updateProduct 호출 시 아무 동작도 하지 않도록 설정합니다.
+        // When
         doNothing().when(productFacadeService).updateProduct(any(ProductUpdateDto.class));
 
         String content = objectMapper.writeValueAsString(productUpdateDto);
@@ -161,10 +161,10 @@ class ProductControllerTest {
         // When
         when(productFacadeService.getMinPriceProducts()).thenReturn(cheapestProductListDto);
 
-        // Then: GET 요청을 수행하여 올바른 상태 코드와 응답을 검증합니다.
+        // Then
         this.mockMvc.perform(get("/api/v1/products/cheapest-products"))
                 .andDo(print())
-                .andExpect(status().isOk());  // 200 OK 응답을 기대합니다.
+                .andExpect(status().isOk());
 
         verify(productFacadeService, times(1)).getMinPriceProducts();
     }
@@ -182,7 +182,7 @@ class ProductControllerTest {
         // When
         when(productFacadeService.getCheapestProductsByBrand()).thenReturn(cheapestProductsByBrandDto);
 
-        // Then: GET 요청을 수행하여 올바른 상태 코드와 응답을 검증합니다.
+        // Then
         this.mockMvc.perform(get("/api/v1/products/cheapest-products/brands"))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -209,6 +209,4 @@ class ProductControllerTest {
                 .andExpect(status().isOk());
         verify(productFacadeService, times(1)).findMinAndMaxPriceProductByCategoryName(categoryName);
     }
-
-
 }
