@@ -83,7 +83,7 @@ class CategoryControllerTest {
         // Given
         long categoryId = 1L;
         CategoryDto categoryDto = CategoryDto.builder()
-                .name("상ㄴ")
+                .name("상의")
                 .build();
         doNothing().when(categoryService).updateCategory(longArgumentCaptor.capture(), categoryDtoArgumentCaptor.capture());
 
