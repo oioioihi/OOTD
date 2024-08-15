@@ -57,9 +57,7 @@ public class ProductService {
     public Product createProduct(Product product) {
 
         try {
-            Product save = productRepository.save(product);
-            System.out.println(save);
-            return save;
+            return productRepository.save(product);
         } catch (Exception e) {
             throw new ProductAlreadyExistException("이미 존재하는 상품입니다.");
         }
