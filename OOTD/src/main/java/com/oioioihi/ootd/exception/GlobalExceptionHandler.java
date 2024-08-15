@@ -16,15 +16,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.createNotFound(exception.getMessage()));
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiResponse<?>> handleAllUncaughtException(Exception exception) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.createServerError(exception.getMessage()));
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<?>> handleAllUncaughtException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.createServerError(exception.getMessage()));
+    }
 
     @ExceptionHandler(value = {ProductAlreadyExistException.class,
             BrandAlreadyExistException.class,
             CategoryAlreadyExistException.class})
-    public ResponseEntity<ApiResponse<?>> handleAllUncaughtException(Exception exception) {
+    public ResponseEntity<ApiResponse<?>> handleAlreadyExistException(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.createClientError(exception.getMessage()));
     }
 
