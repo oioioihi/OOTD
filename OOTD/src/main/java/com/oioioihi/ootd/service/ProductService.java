@@ -25,7 +25,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductDao getMinPriceProductAndBrand() {
+    public ProductDao getCheapestProductsByBrand() {
 
         return productRepository.getMinPriceProductAndBrand()
                 .orElseThrow(() -> new NotFoundException("일치하는 조건의 상품이 없습니다"));
@@ -33,7 +33,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> findAllByIdBrandId(Long brandId) {
+    public List<Product> findAllByBrandId(Long brandId) {
         return productRepository.findAllByBrandId(brandId)
                 .orElseThrow(() -> new NotFoundException("%s번 브랜드가 없습니다.".formatted(brandId)));
     }
