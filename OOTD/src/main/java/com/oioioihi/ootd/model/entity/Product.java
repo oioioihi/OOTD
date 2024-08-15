@@ -8,6 +8,11 @@ import lombok.*;
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "PRODUCT", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "CATEGORY_BRAND_UNIQUE",
+                columnNames = {"category_id", "brand_id"}
+        )})
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product {
