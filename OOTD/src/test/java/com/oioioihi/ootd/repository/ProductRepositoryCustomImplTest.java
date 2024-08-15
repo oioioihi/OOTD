@@ -28,8 +28,8 @@ class ProductRepositoryCustomImplTest {
     @Test
     public void getMinPriceProductAndBrand() {
 
-        ProductDao minPriceProductAndBrand = productRepository.getMinPriceProductAndBrand();
-        System.out.println(minPriceProductAndBrand);
+        Optional<ProductDao> minPriceProductAndBrand = productRepository.getMinPriceProductAndBrand();
+        System.out.println(minPriceProductAndBrand.get());
 
     }
 

@@ -21,10 +21,10 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public ProductDao getMinPriceProductAndBrand() {
+    public Optional<ProductDao> getMinPriceProductAndBrand() {
 
 
-        return from(product)
+        return Optional.ofNullable(from(product)
                 .select(Projections.constructor(ProductDao.class,
                         brand.id.as("brandId"),
                         brand.name.as("brand"),
@@ -34,7 +34,7 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .groupBy(product.brandId)
                 .orderBy(product.price.sum().asc())
                 .limit(1)
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
@@ -57,6 +57,8 @@ public class ProductRepositoryCustomImpl extends QuerydslRepositorySupport imple
         );
     }
 
+    //
+//    select b1_0.name,p1_0.price from product p1_0 join brand b1_0 on b1_0.id=p1_0.brand_id where p1_0.price=(select min(p2_0.price) from product p2_0 where p2_0.category_id=1) and p1_0.category_id=1
     @Override
     public Optional<List<ProductDao>> findMostCheapestProductByCategoryId(Long categoryId) {
         return Optional.ofNullable(
