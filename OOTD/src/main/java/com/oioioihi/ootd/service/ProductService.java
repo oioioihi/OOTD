@@ -27,7 +27,9 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDao getMinPriceProductAndBrand() {
 
-        return productRepository.getMinPriceProductAndBrand();
+        return productRepository.getMinPriceProductAndBrand()
+                .orElseThrow(() -> new NotFoundException("일치하는 조건의 상품이 없습니다"));
+
     }
 
     @Transactional(readOnly = true)
@@ -41,10 +43,13 @@ public class ProductService {
     public Pair<List<ProductDao>, List<ProductDao>> findMinAndMaxProductByCategoryName(Long categoryId) {
 
         List<ProductDao> expensiveProduct = productRepository.findMostExpensiveProductByCategoryId(categoryId)
-                .orElseThrow(() -> new NotFoundException("%s번 카테고리가 없습니다.".formatted(categoryId)));
+                .orElseThrow(() -> new NotFoundException("%s번 카테고리에 존재하는 상품이 없습니다.".formatted(categoryId)));
         List<ProductDao> cheapestProduct = productRepository.findMostCheapestProductByCategoryId(categoryId)
-                .orElseThrow(() -> new NotFoundException("%s번 카테고리가 없습니다.".formatted(categoryId)));
+                .orElseThrow(() -> new NotFoundException("%s번 카테고리에 존재하는 상품이 없습니다.".formatted(categoryId)));
 
+        if (expensiveProduct.size() == 0) {
+            throw new NotFoundException("해당 카테고리에 존재하는 상품이 없습니다");
+        }
         return Pair.of(expensiveProduct, cheapestProduct);
     }
 
@@ -61,8 +66,9 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(Product product) {
-        return null;
+    public void updateProduct(Product savedProduct, Product newProduct) {
+        Product product = savedProduct.update(newProduct);
+        productRepository.save(product);
     }
 
     @Transactional
@@ -71,9 +77,13 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public boolean isExist(Long categoryId, Long brandId) {
+        return productRepository.findByCategoryIdAndBrandId(categoryId, brandId).isPresent();
+    }
+
+    @Transactional(readOnly = true)
     public Product findProductById(Long categoryId, Long brandId) {
-        return productRepository.findByCategoryIdAndBrandId(categoryId, brandId).orElseThrow(
-                () -> new NotFoundException("존재하지 않는 상품입니다.")
-        );
+        return productRepository.findByCategoryIdAndBrandId(categoryId, brandId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않은 상품입니다."));
     }
 }
