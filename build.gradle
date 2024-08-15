@@ -47,6 +47,16 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        exceptionFormat "full"
+        showStandardStreams = true
+        afterTest { descriptor, result ->
+            println "Test ${descriptor.name} [${result.resultType}]"
+        }
+    }
 }
+

@@ -119,7 +119,7 @@ public class ProductFacadeService {
 
     @Transactional
     public void updateProduct(final ProductUpdateDto productUpdateDto) {
-//TODO 맞는 로직인지 확인필요 ..
+
         Category category = categoryService.findCategoryByName(productUpdateDto.getNewCategory());
         Brand brand = brandService.findBrandByName(productUpdateDto.getNewBrand());
         Product savedProduct = productService.findProductById(category.getId(), brand.getId());
