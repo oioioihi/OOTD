@@ -120,7 +120,7 @@ class ProductControllerTest {
                 .andExpect(result -> assertThat(result.getResolvedException())
                         .isInstanceOf(MethodArgumentNotValidException.class))
                 .andExpect(jsonPath("$.data.newCategory").value("새 카테고리명은 빈 값일 수 없습니다."))
-                .andExpect(jsonPath("$.data.price").value("must be greater than or equal to 0"))
+                .andExpect(jsonPath("$.data.price").value("가격은 0 이상이어야 합니다."))
                 .andExpect(jsonPath("$.data.oldCategory").value("기존 카테고리명은 빈 값일 수 없습니다."))
                 .andExpect(jsonPath("$.data.newBrand").value("새 브랜드명은 빈 값일 수 없습니다."))
                 .andExpect(jsonPath("$.data.oldBrand").value("기존 브랜드명은 빈 값일 수 없습니다."));  // 각각의 필드에 대해 오류가 발생했는지 확인합니다.
