@@ -3,6 +3,8 @@ package com.oioioihi.ootd.model.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oioioihi.ootd.model.entity.Product;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,7 +19,8 @@ public class ProductDto {
     String category;
     @NotBlank(message = "브랜드명은 빈 값일 수 없습니다.")
     String brand;
-    @NotBlank(message = "가격은 빈 값일 수 없습니다.")
+    @NotNull(message = "가격은 빈 값일 수 없습니다.")
+    @PositiveOrZero
     long price;
 
     public static ProductDto createInstance(Product product, String categoryName, String brandName) {
