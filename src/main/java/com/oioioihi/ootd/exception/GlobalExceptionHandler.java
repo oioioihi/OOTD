@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleValidationException(BindingResult bindingResult) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.createFail(bindingResult));
     }
-    @ExceptionHandler(value = {
+    @ExceptionHandler(value = {IllegalArgumentException.class,
             HttpMessageNotReadableException.class})
     public ResponseEntity<ApiResponse<?>> handleParsingException(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.createClientError(BAD_REQUEST));
