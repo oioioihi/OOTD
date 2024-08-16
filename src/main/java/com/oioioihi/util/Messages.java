@@ -17,5 +17,7 @@ public class Messages {
     public static final String PRODUCT_NOT_EXIST_CATEGORY = "해당 카테고리에 존재하는 상품이 없습니다";
     public static final String PRODUCT_CONDITION_NOT_EXIST = "일치하는 조건의 상품이 없습니다";
     public static final String PRODUCT_ALREADY_EXIST ="이미 존재하는 상품입니다.";
+    public static final String PRICE_MUST_OVER_THAN_ZERO = "가격은 0 이상이어야 합니다.";
+
 
 }
