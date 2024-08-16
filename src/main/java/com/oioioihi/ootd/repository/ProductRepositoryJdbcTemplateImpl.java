@@ -20,19 +20,7 @@ public class ProductRepositoryJdbcTemplateImpl implements ProductRepositoryJdbcT
 
     @Override
     public List<ProductDao> getMinPriceProducts() {
-        final String MIN_PRICE_PRODUCT_BY_CATEGORY =
-                "SELECT DISTINCT ON (c.id) " +
-                        "    b.name AS brand_name, " +
-                        "    c.name AS category_name, " +
-                        "    c.id AS category_id, " +
-                        "    p.price " +
-                        "FROM " +
-                        "    product AS p " +
-                        "    JOIN category AS c ON c.id = p.category_id " +
-                        "    JOIN brand AS b ON b.id = p.brand_id " +
-                        "ORDER BY " +
-                        "    p.price," +
-                        "    b.name desc";
+        final String MIN_PRICE_PRODUCT_BY_CATEGORY = "SELECT DISTINCT ON (c.id) b.name AS brand_name, c.name AS category_name, c.id AS category_id, p.price FROM product AS p JOIN category AS c ON c.id = p.category_id JOIN brand AS b ON b.id = p.brand_id ORDER BY  p.price, b.name desc";
 
         return jdbcTemplate.query(MIN_PRICE_PRODUCT_BY_CATEGORY, new ProductInfoRowMapper());
     }
