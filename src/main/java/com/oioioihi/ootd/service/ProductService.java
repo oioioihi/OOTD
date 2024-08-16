@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.oioioihi.util.Messages.*;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -28,14 +30,14 @@ public class ProductService {
     public ProductDao getCheapestProductsByBrand() {
 
         return productRepository.getMinPriceProductAndBrand()
-                .orElseThrow(() -> new NotFoundException("일치하는 조건의 상품이 없습니다"));
+                .orElseThrow(() -> new NotFoundException(PRODUCT_CONDITION_NOT_EXIST));
 
     }
 
     @Transactional(readOnly = true)
     public List<Product> findAllByBrandId(Long brandId) {
         return productRepository.findAllByBrandId(brandId)
-                .orElseThrow(() -> new NotFoundException("%s번 브랜드가 없습니다.".formatted(brandId)));
+                .orElseThrow(() -> new NotFoundException(BRAND_NOT_EXIST.formatted(brandId)));
     }
 
 
@@ -43,12 +45,12 @@ public class ProductService {
     public Pair<List<ProductDao>, List<ProductDao>> findMinAndMaxProductByCategoryName(Long categoryId) {
 
         List<ProductDao> expensiveProduct = productRepository.findMostExpensiveProductByCategoryId(categoryId)
-                .orElseThrow(() -> new NotFoundException("%s번 카테고리에 존재하는 상품이 없습니다.".formatted(categoryId)));
+                .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_EXIST_BY_CATEGORY.formatted(categoryId)));
         List<ProductDao> cheapestProduct = productRepository.findMostCheapestProductByCategoryId(categoryId)
-                .orElseThrow(() -> new NotFoundException("%s번 카테고리에 존재하는 상품이 없습니다.".formatted(categoryId)));
+                .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_EXIST_BY_CATEGORY.formatted(categoryId)));
 
         if (expensiveProduct.size() == 0) {
-            throw new NotFoundException("해당 카테고리에 존재하는 상품이 없습니다");
+            throw new NotFoundException(PRODUCT_NOT_EXIST_CATEGORY);
         }
         return Pair.of(expensiveProduct, cheapestProduct);
     }
@@ -59,7 +61,7 @@ public class ProductService {
         try {
             return productRepository.save(product);
         } catch (Exception e) {
-            throw new ProductAlreadyExistException("이미 존재하는 상품입니다.");
+            throw new ProductAlreadyExistException(PRODUCT_ALREADY_EXIST);
         }
     }
 
@@ -82,6 +84,6 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Product findProductById(Long categoryId, Long brandId) {
         return productRepository.findByCategoryIdAndBrandId(categoryId, brandId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않은 상품입니다."));
+                .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_EXIST));
     }
 }

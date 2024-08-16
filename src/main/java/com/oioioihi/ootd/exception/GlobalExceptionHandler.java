@@ -3,10 +3,13 @@ package com.oioioihi.ootd.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static com.oioioihi.util.Messages.BAD_REQUEST;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,5 +34,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidationException(BindingResult bindingResult) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.createFail(bindingResult));
+    }
+    @ExceptionHandler(value = {
+            HttpMessageNotReadableException.class})
+    public ResponseEntity<ApiResponse<?>> handleParsingException(Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.createClientError(BAD_REQUEST));
     }
 }

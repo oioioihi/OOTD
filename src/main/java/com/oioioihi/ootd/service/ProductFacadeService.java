@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.oioioihi.util.Messages.PRODUCT_ALREADY_EXIST;
+
 @Component
 @RequiredArgsConstructor
 public class ProductFacadeService {
@@ -102,7 +104,7 @@ public class ProductFacadeService {
 
         if (productService.isExist(category.getId(), brand.getId())
         ) {
-            throw new ProductAlreadyExistException("이미 존재하는 상품입니다.");
+            throw new ProductAlreadyExistException(PRODUCT_ALREADY_EXIST);
         }
 
 

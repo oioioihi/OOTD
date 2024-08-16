@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.oioioihi.util.Messages.*;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -18,13 +20,13 @@ public class CategoryService {
     public Category findCategoryByName(String categoryName) {
 
         return categoryRepository.findByName(categoryName).orElseThrow(() ->
-                new NotFoundException("%s 카테고리가 없습니다.".formatted(categoryName)));
+                new NotFoundException(CATEGORY_NAME_NOT_EXIST.formatted(categoryName)));
     }
 
     @Transactional
     public Category createCategory(final CategoryDto categoryDto) {
         if (categoryRepository.findByName(categoryDto.getName()).isPresent()) {
-            throw new CategoryAlreadyExistException("%s은 이미 존재하는 카테고리입니다.".formatted(categoryDto.getName()));
+            throw new CategoryAlreadyExistException(CATEGORY_ALREADY_EXIST.formatted(categoryDto.getName()));
         }
         Category category = categoryDto.toEntity();
         return categoryRepository.save(category);
@@ -34,11 +36,11 @@ public class CategoryService {
     public void updateCategory(final long categoryId, final CategoryDto categoryDto) {
         categoryRepository.findByName(categoryDto.getName())
                 .ifPresentOrElse(findCategory -> {
-                            throw new CategoryAlreadyExistException("%s은 이미 존재하는 카테고리입니다.".formatted(findCategory.getName()));
+                            throw new CategoryAlreadyExistException(CATEGORY_ALREADY_EXIST.formatted(findCategory.getName()));
                         },
                         () -> {
                             Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
-                                    new NotFoundException("%s번 카테고리가 존재하지 않습니다.".formatted(categoryId)));
+                                    new NotFoundException(CATEGORY_NOT_EXIST.formatted(categoryId)));
                             categoryRepository.save(category.update(categoryDto));
                         });
 
@@ -47,7 +49,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
-                new NotFoundException("%s번 카테고리가 존재하지 않습니다.".formatted(categoryId)));
+                new NotFoundException(CATEGORY_NOT_EXIST.formatted(categoryId)));
         categoryRepository.delete(category);
     }
 

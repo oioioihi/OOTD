@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.oioioihi.util.Messages.*;
+
 @Service
 @RequiredArgsConstructor
 public class BrandService {
@@ -18,7 +20,7 @@ public class BrandService {
     @Transactional
     public Brand createBrand(final BrandDto brandDto) {
         if (brandRepository.findByName(brandDto.getName()).isPresent()) {
-            throw new BrandAlreadyExistException("%s은 이미 존재하는 브랜드입니다.".formatted(brandDto.getName()));
+            throw new BrandAlreadyExistException(BRAND_ALREADY_EXIST.formatted(brandDto.getName()));
         }
         Brand brand = brandDto.toEntity();
         return brandRepository.save(brand);
@@ -28,11 +30,11 @@ public class BrandService {
     public void updateBrand(final long brandId, final BrandDto brandDto) {
         brandRepository.findByName(brandDto.getName())
                 .ifPresentOrElse(findBrand -> {
-                            throw new BrandAlreadyExistException("%s은 이미 존재하는 브랜드입니다.".formatted(findBrand.getName()));
+                            throw new BrandAlreadyExistException(BRAND_ALREADY_EXIST.formatted(findBrand.getName()));
                         },
                         () -> {
                             Brand brand = brandRepository.findById(brandId).orElseThrow(() ->
-                                    new NotFoundException("%s번 브랜드가 존재하지 않습니다.".formatted(brandId)));
+                                    new NotFoundException(BRAND_NOT_EXIST.formatted(brandId)));
                             brandRepository.save(brand.update(brandDto));
                         });
 
@@ -41,14 +43,14 @@ public class BrandService {
     @Transactional
     public void deleteBrand(long brandId) {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() ->
-                new NotFoundException("%s번 브랜드가 존재하지 않습니다.".formatted(brandId)));
+                new NotFoundException(BRAND_NOT_EXIST.formatted(brandId)));
         brandRepository.delete(brand);
     }
 
     @Transactional(readOnly = true)
     public Brand findBrandByName(String brandName) {
         return brandRepository.findByName(brandName).orElseThrow(() ->
-                new NotFoundException("%s 브랜드가 없습니다.".formatted(brandName)));
+                new NotFoundException(BRAND_NAME_NOT_EXIST.formatted(brandName)));
     }
 
 }
